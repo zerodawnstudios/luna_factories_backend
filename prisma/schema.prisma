@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client" 
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  
+}
+
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  email     String   @unique
+  phone     String
+  country   String
+  password  String
+  isAdmin   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users") // This maps the table name to "users" in the DB
+}
+
+// model Package {
+//   id          String   @id @default(uuid()) @db.Uuid
+//   name        String
+//   duration    Int    
+//   price       Float    
+//   coverImage   String   // URL or path to the cover image
+//   description String  
+//   isSpecial   Boolean  @default(false)
+//   bookings    Booking[] // One-to-many relation with Booking
+//   createdAt   DateTime @default(now())
+// }
+
+// model Booking {
+//   id            String   @id @default(uuid()) @db.Uuid
+//   bookingDate   DateTime 
+//   bookingTime   DateTime 
+//   firstName     String   
+//   lastName      String   
+//   email         String   
+//   phoneNumber   String   
+//   message       String   
+//   packageId     String   @db.Uuid
+//   package       Package  @relation(fields: [packageId], references: [id]) // Relationship to the Package table
+// }
+
+// model ContactRequest {
+//   id                  String   @id @default(uuid()) @db.Uuid
+//   firstName           String
+//   lastName            String
+//   address             String?
+//   email               String
+//   phone               String
+//   sessionType         String[]   
+//   preferredDate       DateTime?
+//   preferredTime       String?  // Keep as string for simplicity like "4:00 PM"
+//   hasLocationInMind   Boolean @default(false)
+//   location            String?  // Optional if hasLocationInMind = false
+//   commercialUse       Boolean @default(false)
+//   commercialDetails   String?  // Required if commercialUse = true
+//   numberOfPeople      Int
+//   additionalInfo      String?
+
+//   createdAt           DateTime @default(now())
+// }
+
+// model Photographer {
+//   id        String   @id @default(uuid()) @db.Uuid
+//   name      String
+//   bio       String?
+//   email     String  @unique
+//   phone     String
+//   instagram String?
+//   imageUrl  String? // Store image URL or path
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model FAQ {
+//   id        String   @id @default(uuid()) @db.Uuid
+//   question  String
+//   answer    String
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model Album {
+//   id          String   @id @default(uuid()) @db.Uuid
+//   title       String
+//   description String?
+//   date        DateTime
+//   coverImage  String   // Album cover image
+//   category    String   // (editable/flexible)
+//   showOnPortfolio Boolean @default(false) // Indicates if the album should be shown on the portfolio
+//   photos      Photo[]  // One-to-many: album has many photos
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+// }
+
+// model Photo {
+//   id        String   @id @default(uuid()) @db.Uuid
+//   imageUrl  String   // URL or path to the photo
+//   albumId   String   @db.Uuid
+//   album     Album    @relation(fields: [albumId], references: [id])
+//   createdAt DateTime @default(now())
+// }
+
+// // This model is for storing the policies of the website
+
+// model Policy {
+//   id      Int    @id @default(autoincrement())
+//   title   String
+//   details String
+// }
+
+
+// model Review {
+//   id        Int      @id @default(autoincrement()) // Unique identifier for each review
+//   title     String   // Title of the review
+//   name      String   // Name of the reviewer
+//   imageUrl  String   // Optional URL or path to an image associated with the review
+//   detail    String   // Content or description of the review
+//   createdAt DateTime @default(now()) // Timestamp of review creation
+//   updatedAt DateTime @updatedAt // Automatically updates when review is modified
+  
+// }
+
+// model Location {
+//   id              String   @id @default(cuid())
+//   name            String
+//   locationAddress String
+//   travelFee       Float
+//   entranceFee     String?
+//   hours           String?
+//   bestPhotoTime   String?
+//   tips            String?
+//   hikeRequired    Boolean
+//   description     String?
+//   isFeatured      Boolean   @default(false)  // Marks highlighted locations
+//   imageUrl        String?                    // Image for featured/highlighted card
+// }
+
+// model Studios {
+//   id            Int      @id @default(autoincrement())
+//   name          String   // Name of the studio
+//   city          String   // City where the studio is located
+//   address       String   // Address of the studio
+//   price         String?   // Price for booking the studio
+//   studioType    String?   // Type of studio (e.g., photography, video, etc.)
+//   description   String?   // Description of the studio
+//   studioImage   String   // Image of the studio
+//   website       String?  // Optional website link for the studio
+//   instagram     String?  // Optional Instagram link for the studio
+// }
+
+
+// model Image {
+//   id        Int      @id @default(autoincrement())
+//   key       String   @unique             // Unique identifier for image (e.g., 'home_hero_banner')
+//   imageUrl  String
+//   page      String                       // Page where image is used (e.g., 'home', 'about')
+//   section   String?                      // Optional section info (e.g., 'hero', 'team_section')
+//   altText   String?                      // Alt text for accessibility
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model PageImage {
+//   id          String   @id @default(uuid())
+//   page        String
+//   slot        String
+//   aspectRatio String
+//   imageUrl    String
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @default(now()) @updatedAt
+
+//   @@unique([page, slot])
+//   @@index([page])
+// }

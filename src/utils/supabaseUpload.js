@@ -1,6 +1,6 @@
 import { supabase } from '../config/supabaseClient.js';
 
-const uploadImageToSupabase = async (file, folderName = 'photographers') => {
+const uploadImageToSupabase = async (file, folderName) => {
   const fileName = `${folderName}/${file.originalname}-${Date.now()}`;
 
   const { data, error } = await supabase.storage

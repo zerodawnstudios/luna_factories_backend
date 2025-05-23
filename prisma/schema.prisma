@@ -23,6 +23,47 @@ model User {
   @@map("users") // This maps the table name to "users" in the DB
 }
 
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String
+  factories Factory[]
+}
+
+model Factory {
+  id                Int        @id @default(autoincrement())
+  name              String
+  location          String
+  address           String
+  phone             String
+  email             String
+  certification     String
+  productionCapacity String
+  description       String
+  recommendedReason String
+  videoLink         String
+  mainImage         String
+  status            String
+  categoryId        Int
+  category          Category   @relation(fields: [categoryId], references: [id])
+  products          Product[]
+  pictures          Picture[]
+}
+
+model Product {
+  id         Int      @id @default(autoincrement())
+  name       String
+  price      Float
+  factoryId  Int
+  factory    Factory  @relation(fields: [factoryId], references: [id])
+}
+
+model Picture {
+  id         Int      @id @default(autoincrement())
+  url        String
+  factoryId  Int
+  factory    Factory  @relation(fields: [factoryId], references: [id])
+}
+
 // model Package {
 //   id          String   @id @default(uuid()) @db.Uuid
 //   name        String

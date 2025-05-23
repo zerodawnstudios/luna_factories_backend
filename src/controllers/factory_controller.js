@@ -260,9 +260,10 @@ const get_factory_by_id = async (req, res) => {
 const delete_factory = async (req, res) => {
   try {
     const { id } = req.params;
+    const factoryId = parseInt(id);
 
     const factory = await prisma.factory.findUnique({
-      where: { id: parseInt(id) },
+      where: { id: factoryId },
     });
 
     if (!factory) {
@@ -272,9 +273,19 @@ const delete_factory = async (req, res) => {
       });
     }
 
-    // Delete factory (cascade will handle related products and pictures)
+    // Delete related products first
+    await prisma.product.deleteMany({
+      where: { factoryId },
+    });
+
+    // Optional: delete related pictures too if they exist
+    await prisma.picture.deleteMany({
+      where: { factoryId },
+    });
+
+    // Now delete the factory
     await prisma.factory.delete({
-      where: { id: parseInt(id) },
+      where: { id: factoryId },
     });
 
     return res.status(200).json({
@@ -286,30 +297,6 @@ const delete_factory = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Failed to delete factory',
-      error: error.message,
-    });
-  }
-};
-
-const get_factory_categories = async (req, res) => {
-  try {
-    const categories = await prisma.category.findMany({
-      select: {
-        id: true,
-        name: true,
-      },
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: 'Factory categories retrieved successfully',
-      data: categories,
-    });
-  } catch (error) {
-    console.error('Error retrieving factory categories:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to retrieve factory categories',
       error: error.message,
     });
   }
@@ -341,37 +328,6 @@ const get_factory_products = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Failed to retrieve factory products',
-      error: error.message,
-    });
-  }
-};
-
-const get_factory_pictures = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const pictures = await prisma.picture.findMany({
-      where: { factoryId: parseInt(id) },
-      include: {
-        factory: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: 'Factory pictures retrieved successfully',
-      data: pictures,
-    });
-  } catch (error) {
-    console.error('Error retrieving factory pictures:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to retrieve factory pictures',
       error: error.message,
     });
   }
@@ -496,94 +452,14 @@ const delete_factory_product = async (req, res) => {
   }
 };
 
-const add_factory_pictures = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'At least one picture is required',
-      });
-    }
-
-    // Check if factory exists
-    const factory = await prisma.factory.findUnique({
-      where: { id: parseInt(id) },
-    });
-
-    if (!factory) {
-      return res.status(404).json({
-        success: false,
-        message: 'Factory not found',
-      });
-    }
-
-    // Upload all pictures and create database records
-    const picturePromises = req.files.map(async (file) => {
-      const pictureUrl = await uploadImageToSupabase(file, 'factory-pictures');
-      return prisma.picture.create({
-        data: {
-          url: pictureUrl,
-          factoryId: parseInt(id),
-        },
-      });
-    });
-
-    const pictures = await Promise.all(picturePromises);
-
-    return res.status(201).json({
-      success: true,
-      message: 'Pictures added successfully',
-      data: pictures,
-    });
-  } catch (error) {
-    console.error('Error adding factory pictures:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to add factory pictures',
-      error: error.message,
-    });
-  }
-};
-
-const delete_factory_picture = async (req, res) => {
-  try {
-    const { factoryId, pictureId } = req.params;
-
-    await prisma.picture.delete({
-      where: {
-        id: parseInt(pictureId),
-        factoryId: parseInt(factoryId),
-      },
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: 'Picture deleted successfully',
-    });
-  } catch (error) {
-    console.error('Error deleting factory picture:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to delete factory picture',
-      error: error.message,
-    });
-  }
-};
-
 export default {
   create_factory,
   update_factory,
   get_factories,
   get_factory_by_id,
   delete_factory,
-  get_factory_categories,
   get_factory_products,
-  get_factory_pictures,
   add_factory_product,
   update_factory_product,
   delete_factory_product,
-  add_factory_pictures,
-  delete_factory_picture,
 };

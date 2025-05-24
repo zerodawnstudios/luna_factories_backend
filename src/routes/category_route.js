@@ -9,7 +9,7 @@ router.get('/', categoryController.get_categories);
 router.get('/:id', categoryController.get_category_by_id);
 
 // Protected routes (require authentication)
-// router.use(protect);
+router.use(protect);
 
 // Category CRUD operations
 router.post('/', categoryController.create_category);

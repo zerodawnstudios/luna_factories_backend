@@ -10,7 +10,7 @@ router.get('/factory/:factoryId', pictureController.get_factory_pictures);
 router.get('/:id', pictureController.get_picture_by_id);
 
 // Protected routes (require authentication)
-// router.use(protect);
+router.use(protect);
 
 // Picture management
 router.post(

@@ -11,7 +11,7 @@ router.get('/:id', factoryController.get_factory_by_id);
 router.get('/:id/products', factoryController.get_factory_products);
 
 // Protected routes (require authentication)
-// router.use(protect);
+router.use(protect);
 
 // Factory CRUD operations
 router.post('/', upload.single('mainImage'), factoryController.create_factory);

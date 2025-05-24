@@ -24,7 +24,7 @@ app.use(cookieParser());
 app.use('/api/users', userRoute);
 app.use('/api/factory', factoryRoute);
 app.use('/api/picture', pictureRoute);
-app.use('/api/catgory', categoryRoute);
+app.use('/api/category', categoryRoute);
 
 const PORT = process.env.PORT || 5000;
 connectDB().then(() => {
